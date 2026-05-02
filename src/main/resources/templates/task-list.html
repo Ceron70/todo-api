@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Tareas - Spring Boot + Bootstrap</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .completed-task {
+            text-decoration: line-through;
+            opacity: 0.7;
+        }
+        .card-header i {
+            margin-right: 8px;
+        }
+        body {
+            background: #f4f6f9;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="text-center mb-4">
+                <i class="fas fa-tasks text-primary"></i> Gestor de Tareas
+                <span class="badge bg-secondary">Thymeleaf + Bootstrap</span>
+            </h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Formulario para crear nueva tarea -->
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white">
+                    <i class="fas fa-plus-circle"></i> Nueva Tarea
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/tasks-view/create}" th:object="${newTask}" method="post">
+                        <div class="mb-3">
+                            <label for="title" class="form-label">Título *</label>
+                            <input type="text" class="form-control" th:field="*{title}" id="title" placeholder="Ej: Aprender Bootstrap">
+                            <div class="text-danger small" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Descripción</label>
+                            <textarea class="form-control" th:field="*{description}" id="description" rows="2" placeholder="Opcional..."></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="userId" class="form-label">Usuario *</label>
+                            <select class="form-select" th:field="*{userId}" id="userId" required>
+                                <option value="">-- Selecciona un usuario --</option>
+                                <option th:each="user : ${users}" th:value="${user.id}" th:text="${user.username}"></option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-save"></i> Crear Tarea
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Listado de tareas -->
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-secondary text-white">
+                    <i class="fas fa-list-check"></i> Listado de Tareas
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover mb-0 align-middle">
+                            <thead class="table-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Título</th>
+                                <th>Descripción</th>
+                                <th>Usuario</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="task : ${tasks}">
+                                <td class="fw-bold" th:text="${task.id}"></td>
+                                <td th:text="${task.title}" th:classappend="${task.completed} ? 'completed-task' : ''"></td>
+                                <td th:text="${task.description} ?: '—'"></td>
+                                <td>
+                                        <span th:if="${task.user != null}" class="badge bg-info text-dark">
+                                            <i class="fas fa-user"></i> <span th:text="${task.user.username}"></span>
+                                        </span>
+                                    <span th:unless="${task.user != null}" class="badge bg-warning text-dark">Sin usuario</span>
+                                </td>
+                                <td>
+                                        <span th:if="${task.completed}" class="badge bg-success">
+                                            <i class="fas fa-check-circle"></i> Completada
+                                        </span>
+                                    <span th:unless="${task.completed}" class="badge bg-danger">
+                                            <i class="fas fa-clock"></i> Pendiente
+                                        </span>
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <a th:href="@{/tasks-view/toggle/{id}(id=${task.id})}" class="btn btn-outline-success" title="Marcar/Desmarcar">
+                                            <i class="fas fa-check-double"></i>
+                                        </a>
+                                        <a th:href="@{/tasks-view/delete/{id}(id=${task.id})}" class="btn btn-outline-danger" title="Eliminar" onclick="return confirm('¿Eliminar esta tarea permanentemente?')">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr th:if="${tasks.isEmpty()}">
+                                <td colspan="6" class="text-center text-muted py-5">
+                                    <i class="fas fa-inbox fa-3x mb-2"></i><br>
+                                    No hay tareas registradas. ¡Crea una!
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4 mb-3">
+        <div class="col text-center">
+            <a href="/index.html" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Volver al frontend con JavaScript
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS Bundle (opcional para algunos componentes) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

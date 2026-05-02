@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Gestor de Tareas</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+    <h1>📋 Mis Tareas</h1>
+
+    <div class="formulario">
+        <h2>Nueva Tarea</h2>
+        <input type="text" id="titulo" placeholder="Título" required>
+        <textarea id="descripcion" placeholder="Descripción"></textarea>
+        <input type="number" id="userId" placeholder="ID del Usuario (ej: 1)" required>
+        <button id="btnCrear">➕ Crear Tarea</button>
+    </div>
+
+    <div class="lista-tareas">
+        <h2>Lista de Tareas</h2>
+        <ul id="lista"></ul>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
